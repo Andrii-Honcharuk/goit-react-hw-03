@@ -1,48 +1,56 @@
-import { useId } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { nanoid } from "nanoid";
+import * as Yup from "yup";
+
 import style from "./ContactForm.module.css";
-import { Formik, Form, Field } from "formik";
+
+const ContactSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(2, "Too Short!")
+    .max(50, "Too Long!")
+    .required("Required"),
+  number: Yup.string()
+    .matches(/^[\d()-]+$/, "Invalid phone number format")
+    .min(2, "Too Short!")
+    .max(50, "Too Long!")
+    .required("Required"),
+});
 
 export default function ContactForm({ onAdd }) {
-  const contactNameId = useId();
-  const contactNumberId = useId();
+  const contactNameId = nanoid();
+  const contactNumberId = nanoid();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (values, action) => {
+    console.log("Values:", values);
     onAdd({
-      id: Date.now(),
-      name: e.target.elements.contactName.value,
-      number: e.target.elements.contactNumber.value,
+      id: nanoid(),
+      name: values.name,
+      number: values.number,
     });
-    e.target.reset();
+    action.resetForm();
   };
 
   return (
     <Formik
       initialValues={{
-        contactName: "",
-        contactNumber: "",
+        id: nanoid(),
+        name: "",
+        number: "",
       }}
-      onSubmit={(v, action) => {
-        console.log("Values:", v);
-        action.resetForm();
-      }}
+      validationSchema={ContactSchema}
+      onSubmit={handleSubmit}
     >
-      <Form className={style.form} onSubmit={handleSubmit}>
+      <Form className={style.form}>
         <label htmlFor={contactNameId}>Name</label>
-        <Field type="text" name="contactName" id={contactNameId}></Field>
-        {/* <input type="text" name="contactName" id={contactNameId}></input> */}
+        <Field type="text" name="name" id={contactNameId}></Field>
+        <p className={style.warning}>
+          <ErrorMessage name="name" />
+        </p>
         <label htmlFor={contactNumberId}>Number</label>
-        <Field
-          type="tel"
-          name="contactNumber"
-          id={contactNumberId}
-          // onChange={(e) => {
-          //   const { value } = e.target;
-          //   if (value.length === 3 || value.length === 6) {
-          //     e.target.value += "-";
-          //   }
-          // }}
-        />
+        <Field type="tel" name="number" id={contactNumberId} />
+        <p className={style.warning}>
+          <ErrorMessage name="number" />
+        </p>
         <button type="submit">Add contact</button>
       </Form>
     </Formik>

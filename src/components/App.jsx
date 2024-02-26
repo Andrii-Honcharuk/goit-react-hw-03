@@ -2,7 +2,7 @@ import ContactForm from "./ContactForm";
 import ContactList from "./ContactList";
 import SearchBox from "./SearchBox";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import style from "./App.module.css";
 const initialContacts = [
   { id: "id-1", name: "Rosie Simpson", number: "459-12-56" },
@@ -12,7 +12,16 @@ const initialContacts = [
 ];
 
 export default function App() {
-  const [contacts, setContacts] = useState(initialContacts);
+  const [contacts, setContacts] = useState(() => {
+    const savedContacts = window.localStorage.getItem("contact");
+    return savedContacts !== null ? JSON.parse(savedContacts) : initialContacts;
+  });
+
+  useEffect(
+    () => window.localStorage.setItem("contact", JSON.stringify(contacts)),
+    [contacts]
+  );
+
   const [filter, setFilter] = useState("");
 
   const addContact = (newContact) => {
@@ -42,48 +51,3 @@ export default function App() {
     </div>
   );
 }
-/*
-const LoginForm = ({ onSubmit }) => {
-  console.log("Props", onSubmit);
-  const handleSubmit = (evt) => {
-    evt.preventDefault();
-    console.log("event", evt);
-
-    const form = evt.target;
-    console.log("form", form);
-    const { login, password } = form.elements;
-    console.log("login:", login, "PSW", password);
-
-    // Значення полів
-    console.log("logVal", login.value, "PaswVal", password.value);
-
-    // Викликаємо пропс onSubmit
-    onSubmit({
-      login: login.value,
-      password: password.value,
-    });
-    // Скидаємо значення полів після відправки
-    form.reset();
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <input type="text" name="login" />
-      <input type="password" name="password" />
-      <button type="submit">Login</button>
-    </form>
-  );
-};
-
-export const App = () => {
-  const handleSubmit = (data) => {
-    console.log(data);
-  };
-
-  return (
-    <>
-      <LoginForm onSubmit={handleSubmit} />
-    </>
-  );
-};
-*/
