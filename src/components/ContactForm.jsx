@@ -21,7 +21,6 @@ export default function ContactForm({ onAdd }) {
   const contactNumberId = nanoid();
 
   const handleSubmit = (values, action) => {
-    console.log("Values:", values);
     onAdd({
       id: nanoid(),
       name: values.name,
