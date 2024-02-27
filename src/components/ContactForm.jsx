@@ -6,12 +6,12 @@ import style from "./ContactForm.module.css";
 
 const ContactSchema = Yup.object().shape({
   name: Yup.string()
-    .min(2, "Too Short!")
+    .min(3, "Too Short!")
     .max(50, "Too Long!")
     .required("Required"),
   number: Yup.string()
     .matches(/^[\d()-]+$/, "Invalid phone number format")
-    .min(2, "Too Short!")
+    .min(3, "Too Short!")
     .max(50, "Too Long!")
     .required("Required"),
 });
@@ -32,7 +32,7 @@ export default function ContactForm({ onAdd }) {
   return (
     <Formik
       initialValues={{
-        id: nanoid(),
+        // id: nanoid(),
         name: "",
         number: "",
       }}
